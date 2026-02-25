@@ -1,0 +1,137 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 68px;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--bio-green) 100%);
+    box-shadow: 0 4px 20px rgba(27, 67, 50, 0.35);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 16px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.nav-logo {
+    font-size: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.nav-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+
+.nav-sub {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 500;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 25px;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(10px);
+}
+
+.nav-link span {
+    font-size: 16px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: white;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 16px;
+        height: 60px;
+    }
+
+    .nav-sub {
+        display: none;
+    }
+
+    .nav-link span:first-child {
+        display: none;
+    }
+
+    .nav-name {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 560px) {
+    .nav-links {
+        gap: 2px;
+    }
+
+    .nav-link {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+}
