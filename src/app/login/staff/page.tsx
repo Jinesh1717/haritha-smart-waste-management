@@ -10,23 +10,63 @@ import { LeafBackground } from "@/components/ui/leaf-background";
 import { Briefcase, KeyRound, ArrowRight, User } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { loginWithEmail, logoutUser } from "@/services/auth";
+import { getUserProfile } from "@/services/firestore";
 
 export default function StaffLoginPage() {
     const router = useRouter();
-    const [staffId, setStaffId] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!staffId || !password) return;
+        if (!email || !password) return;
 
         setIsLoading(true);
-        // Simulate login API call
-        setTimeout(() => {
-            setIsLoading(false);
+        setErrorMsg("");
+
+        try {
+            // 1. Authenticate with Firebase
+            const { user, error: authError } = await loginWithEmail(email, password);
+            
+            if (authError || !user) {
+                setErrorMsg(authError || "Failed to log in. Please check your credentials.");
+                setIsLoading(false);
+                return;
+            }
+
+            // 2. Fetch user profile from Firestore to confirm collector role and status
+            const userProfile = await getUserProfile(user.uid);
+
+            if (!userProfile) {
+                await logoutUser();
+                setErrorMsg("User profile not found. Please register first.");
+                return;
+            }
+
+            if (userProfile.role !== "collector") {
+                await logoutUser();
+                setErrorMsg("Access Denied. You do not have staff privileges.");
+                return;
+            }
+
+            if (userProfile.status === "pending") {
+                await logoutUser();
+                setErrorMsg("Your account is pending admin approval. You cannot log in yet.");
+                return;
+            }
+
+            // Valid, approved staff member
             router.push("/dashboard/staff");
-        }, 1500);
+            
+        } catch (error) {
+            console.error("Login Error:", error);
+            setErrorMsg("An unexpected error occurred during login.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -53,19 +93,24 @@ export default function StaffLoginPage() {
                     <CardContent>
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div className="space-y-4">
+                                {errorMsg && (
+                                    <div className="p-3 bg-red-100 border border-red-300 text-red-700 text-sm rounded-md text-center">
+                                        {errorMsg}
+                                    </div>
+                                )}
                                 <div className="space-y-2">
-                                    <Label htmlFor="staffId" className="text-emerald-900 font-medium">Staff ID</Label>
+                                    <Label htmlFor="email" className="text-emerald-900 font-medium">Staff Email</Label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <User className="h-5 w-5 text-emerald-600/50" />
                                         </div>
                                         <Input
-                                            id="staffId"
-                                            type="text"
-                                            placeholder="Enter Staff ID (e.g., EMP100)"
+                                            id="email"
+                                            type="email"
+                                            placeholder="Enter your registered email"
                                             className="pl-10 bg-white/50 border-emerald-200 text-emerald-950 placeholder:text-slate-500/50 focus-visible:ring-emerald-400 h-12"
-                                            value={staffId}
-                                            onChange={(e) => setStaffId(e.target.value)}
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                             disabled={isLoading}
                                             autoFocus
                                             required
@@ -94,7 +139,7 @@ export default function StaffLoginPage() {
                             <Button
                                 type="submit"
                                 className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md shadow-emerald-200/50 h-12 text-lg font-medium transition-all"
-                                disabled={isLoading || !staffId || !password}
+                                disabled={isLoading || !email || !password}
                             >
                                 {isLoading ? (
                                     <div className="w-6 h-6 border-2 border-white/60 border-t-white rounded-full animate-spin" />
@@ -109,6 +154,12 @@ export default function StaffLoginPage() {
                         <Link href="/" className="text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors">
                             &larr; Back to Portal Selection
                         </Link>
+                        <div className="text-sm text-slate-500">
+                            Don&apos;t have an account?{" "}
+                            <Link href="/register/staff" className="font-semibold text-emerald-600 hover:text-emerald-700">
+                                Apply Here
+                            </Link>
+                        </div>
                     </CardFooter>
                 </Card>
             </motion.div>

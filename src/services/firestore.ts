@@ -14,10 +14,17 @@ import {
 
 // --- USERS & STAFF ---
 
-export const getUserProfile = async (uid: string) => {
+export interface UserProfile {
+    id: string;
+    email?: string;
+    role?: string;
+    [key: string]: any;
+}
+
+export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
+    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as UserProfile : null;
 };
 
 export const createUserProfile = async (uid: string, data: Record<string, unknown>) => {

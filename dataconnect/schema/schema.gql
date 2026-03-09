@@ -1,0 +1,41 @@
+type User @table {
+  displayName: String!
+  createdAt: Timestamp!
+  role: String!
+  email: String
+  photoUrl: String
+  phoneNumber: String
+}
+
+type WasteReport @table {
+  locationLat: Float!
+  locationLng: Float!
+  status: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+  reportPhotoUrl: String
+  collectionPhotoUrl: String
+  reporter: User
+  assignedVolunteer: User
+}
+
+type WasteReportComment @table {
+  commentText: String!
+  createdAt: Timestamp!
+  wasteReport: WasteReport
+  user: User
+}
+
+type Area @table {
+  name: String!
+  createdAt: Timestamp!
+  description: String
+  boundaryGeoJson: String
+}
+
+type VolunteerArea @table(key: ["volunteer", "area"]) {
+  assignedAt: Timestamp!
+  volunteer: User!
+  area: Area!
+}
