@@ -18,7 +18,7 @@ export interface UserProfile {
     id: string;
     email?: string;
     role?: string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
