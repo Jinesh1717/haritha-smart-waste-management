@@ -12,6 +12,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
+import { DEMO_USERS, setDemoSession } from "@/services/auth";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -26,12 +27,16 @@ export default function LoginPage() {
         // Initialize RecaptchaVerifier
         const win = window as unknown as Record<string, unknown>;
         if (!win.recaptchaVerifier) {
-            win.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible',
-                'callback': () => {
-                    // reCAPTCHA solved
-                }
-            });
+            try {
+                win.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': () => {
+                        // reCAPTCHA solved
+                    }
+                });
+            } catch {
+                // Ignore initialization errors in local dev without keys
+            }
         }
     }, []);
 
@@ -39,6 +44,14 @@ export default function LoginPage() {
         e.preventDefault();
         setError(null);
         if (phone.length < 10) return;
+
+        // Check for demo account
+        if (phone === "9876543210") {
+            setStep("otp");
+            setOtp(["1", "2", "3", "4", "5", "6"]);
+            return;
+        }
+
         setIsLoading(true);
 
         try {
@@ -80,7 +93,16 @@ export default function LoginPage() {
         e.preventDefault();
         setError(null);
         const otpValue = otp.join("");
-        if (otpValue.length < 6 || !confirmationResult) return;
+        if (otpValue.length < 6) return;
+
+        // Check for demo account
+        if (phone === "9876543210" || otpValue === "123456") {
+            setDemoSession(DEMO_USERS.resident.user);
+            router.push("/user/dashboard");
+            return;
+        }
+
+        if (!confirmationResult) return;
 
         setIsLoading(true);
         try {
@@ -127,6 +149,30 @@ export default function LoginPage() {
                                     onSubmit={handlePhoneSubmit}
                                     className="space-y-6"
                                 >
+                                    <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/30 rounded-xl text-xs space-y-1.5 text-green-50 mb-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-bold text-green-300 flex items-center gap-1.5">
+                                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                                Demo Resident Account
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setPhone("9876543210");
+                                                    setStep("otp");
+                                                    setOtp(["1", "2", "3", "4", "5", "6"]);
+                                                }}
+                                                className="text-[11px] bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-2.5 py-1 rounded-lg transition-colors shadow-sm"
+                                            >
+                                                Auto Fill
+                                            </button>
+                                        </div>
+                                        <div className="text-green-100/70 space-y-0.5">
+                                            <p>Mobile: <span className="font-mono font-bold text-white">9876543210</span></p>
+                                            <p>OTP: <span className="font-mono font-bold text-white">123456</span></p>
+                                        </div>
+                                    </div>
+
                                     <div className="space-y-3">
                                         <Label htmlFor="phone" className="text-green-50 font-medium">Mobile Number</Label>
                                         <div className="relative">

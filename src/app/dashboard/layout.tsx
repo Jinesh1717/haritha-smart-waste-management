@@ -11,6 +11,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: "Dashboard", href: "/dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
         { name: "Wards", href: "/dashboard/wards", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z" },
         { name: "Staff", href: "/dashboard/staff", icon: "M17 20h5V10a2 2 0 00-2-2h-3m-9 8v-2a2 2 0 012-2h4a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-2a2 2 0 01-2-2H9a2 2 0 00-2 2v2a2 2 0 002 2zm-3-12a3 3 0 110-6 3 3 0 010 6z" },
+        { name: "Attendance", href: "/dashboard/attendance", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
         { name: "Billing", href: "/dashboard/billing", icon: "M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" },
     ];
 

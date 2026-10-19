@@ -19,12 +19,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
+        const getDemoUser = (): User | null => {
+            if (typeof window !== "undefined") {
+                const stored = localStorage.getItem("hks_demo_user");
+                if (stored) {
+                    try {
+                        return JSON.parse(stored) as User;
+                    } catch {
+                        return null;
+                    }
+                }
+            }
+            return null;
+        };
+
+        const initialDemo = getDemoUser();
+        if (initialDemo) {
+            setUser(initialDemo);
+            setLoading(false);
+        }
+
+        const handleAuthChange = () => {
+            const demo = getDemoUser();
+            if (demo) {
+                setUser(demo);
+                setLoading(false);
+            } else if (!auth.currentUser) {
+                setUser(null);
+            }
+        };
+
+        window.addEventListener("hks_auth_change", handleAuthChange);
+
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            const demo = getDemoUser();
+            if (demo) {
+                setUser(demo);
+            } else {
+                setUser(firebaseUser);
+            }
             setLoading(false);
         });
 
-        return () => unsubscribe();
+        return () => {
+            window.removeEventListener("hks_auth_change", handleAuthChange);
+            unsubscribe();
+        };
     }, []);
 
     return (

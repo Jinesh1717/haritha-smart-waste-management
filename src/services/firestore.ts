@@ -22,9 +22,23 @@ export interface UserProfile {
 }
 
 export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
-    const docRef = doc(db, "users", uid);
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as UserProfile : null;
+    if (uid === "demo-admin-id") {
+        return { id: "demo-admin-id", email: "admin@haritha.com", role: "admin", name: "Haritha Admin Officer" };
+    }
+    if (uid === "demo-staff-id") {
+        return { id: "demo-staff-id", email: "staff@haritha.com", role: "collector", status: "approved", name: "Rahul K. (Collector)" };
+    }
+    if (uid === "demo-resident-id") {
+        return { id: "demo-resident-id", phone: "+919876543210", email: "resident@haritha.com", role: "resident", name: "Mahesh K." };
+    }
+
+    try {
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as UserProfile : null;
+    } catch {
+        return null;
+    }
 };
 
 export const createUserProfile = async (uid: string, data: Record<string, unknown>) => {

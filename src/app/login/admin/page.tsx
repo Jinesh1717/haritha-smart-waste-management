@@ -85,6 +85,30 @@ export default function AdminLoginPage() {
                                         {errorMsg}
                                     </div>
                                 )}
+
+                                <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs space-y-1.5 text-emerald-950">
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-bold text-emerald-800 flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                            Demo Admin Account
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setEmail("admin@haritha.com");
+                                                setPassword("admin123");
+                                            }}
+                                            className="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded-lg transition-colors shadow-sm"
+                                        >
+                                            Auto Fill
+                                        </button>
+                                    </div>
+                                    <div className="text-slate-600 space-y-0.5">
+                                        <p>Email: <span className="font-mono font-bold text-emerald-900">admin@haritha.com</span></p>
+                                        <p>Password: <span className="font-mono font-bold text-emerald-900">admin123</span></p>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-2">
                                     <Label htmlFor="email" className="text-emerald-900 font-medium">Admin Email</Label>
                                     <div className="relative">

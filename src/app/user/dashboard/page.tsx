@@ -6,12 +6,33 @@ import { Trash2, AlertCircle, ArrowRight, TrendingUp, CheckCircle, Clock } from 
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { useEffect, useState } from "react";
+import { getCollectionSchedules, getBills, CollectionSchedule, BillInvoice } from "@/services/wasteStore";
+
 export default function ResidentDashboard() {
-    const nextCollection = {
-        date: "15 May 2026",
-        type: "Non-biodegradable",
-        agent: "Rahul K.",
+    const [schedules, setSchedules] = useState<CollectionSchedule[]>([]);
+    const [bills, setBills] = useState<BillInvoice[]>([]);
+
+    const loadData = () => {
+        setSchedules(getCollectionSchedules());
+        setBills(getBills());
     };
+
+    useEffect(() => {
+        loadData();
+        const handleSync = () => loadData();
+        window.addEventListener("hks_data_change", handleSync);
+        return () => window.removeEventListener("hks_data_change", handleSync);
+    }, []);
+
+    const nextSchedule = schedules.length > 0 ? schedules[0] : {
+        date: "21 Oct 2026",
+        wasteType: "Non-biodegradable (Plastic)",
+        collectorName: "Rahul K. (S101)"
+    };
+
+    const pendingDues = bills.filter(b => b.status === "Pending" || b.status === "Overdue");
+    const totalDue = pendingDues.reduce((acc, b) => acc + b.amount, 0);
 
     const recentHistory = [
         { id: 1, date: "01 May 2026", type: "Biodegradable", weight: "2.5 kg", status: "Collected" },
@@ -32,14 +53,14 @@ export default function ResidentDashboard() {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
                         <CardHeader className="pb-2">
                             <CardDescription className="text-emerald-600 font-bold flex items-center gap-2 uppercase tracking-wider text-xs">
-                                <Clock className="w-4 h-4" /> Next Collection
+                                <Clock className="w-4 h-4" /> Next Collection Scheduled
                             </CardDescription>
-                            <CardTitle className="text-3xl text-emerald-950 font-black">{nextCollection.date}</CardTitle>
+                            <CardTitle className="text-2xl text-emerald-950 font-black">{nextSchedule.date}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-1">
-                                <p className="text-sm text-slate-500">Type: <span className="text-emerald-900 font-medium">{nextCollection.type}</span></p>
-                                <p className="text-sm text-slate-500">Agent: <span className="text-emerald-900 font-medium">{nextCollection.agent}</span></p>
+                                <p className="text-sm text-slate-500">Waste Type: <span className="text-emerald-900 font-semibold">{nextSchedule.wasteType}</span></p>
+                                <p className="text-sm text-slate-500">Collector: <span className="text-emerald-900 font-medium">{nextSchedule.collectorName}</span></p>
                             </div>
                             <Button asChild className="w-full mt-4 bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 transition-colors shadow-sm font-semibold">
                                 <Link href="/user/waste/add">Request Special Pickup</Link>
@@ -56,10 +77,10 @@ export default function ResidentDashboard() {
                             <CardDescription className="text-red-500 font-bold flex items-center gap-2 uppercase tracking-wider text-xs">
                                 <AlertCircle className="w-4 h-4" /> Pending Dues
                             </CardDescription>
-                            <CardTitle className="text-4xl text-emerald-950 font-black">₹150.00</CardTitle>
+                            <CardTitle className="text-4xl text-emerald-950 font-black">₹{totalDue}.00</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-sm text-slate-500 mb-4">Monthly fee for May 2026</p>
+                            <p className="text-sm text-slate-500 mb-4">{pendingDues.length} pending fee bills</p>
                             <Button asChild className="w-full bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white shadow-md font-semibold transition-all hover:scale-[1.02]">
                                 <Link href="/user/payments">Pay Now <ArrowRight className="ml-2 w-4 h-4" /></Link>
                             </Button>
