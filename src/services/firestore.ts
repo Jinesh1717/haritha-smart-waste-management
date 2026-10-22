@@ -32,6 +32,19 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
         return { id: "demo-resident-id", phone: "+919876543210", email: "resident@haritha.com", role: "resident", name: "Mahesh K." };
     }
 
+    // Check localStorage fallback for registered users in demo/offline mode
+    if (typeof window !== "undefined") {
+        const localProfiles = localStorage.getItem("hks_registered_users");
+        if (localProfiles) {
+            try {
+                const parsed = JSON.parse(localProfiles);
+                if (parsed[uid]) return parsed[uid] as UserProfile;
+            } catch {
+                // ignore json error
+            }
+        }
+    }
+
     try {
         const docRef = doc(db, "users", uid);
         const docSnap = await getDoc(docRef);
