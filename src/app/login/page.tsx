@@ -12,7 +12,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
-import { DEMO_USERS, setDemoSession } from "@/services/auth";
+import { DEMO_USERS, setDemoSession, setSessionCookie } from "@/services/auth";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -95,9 +95,9 @@ export default function LoginPage() {
         const otpValue = otp.join("");
         if (otpValue.length < 6) return;
 
-        // Check for demo account
+        // Demo resident login
         if (phone === "9876543210" || otpValue === "123456") {
-            setDemoSession(DEMO_USERS.resident.user);
+            setDemoSession(DEMO_USERS.resident.user, "resident");
             router.push("/user/dashboard");
             return;
         }
@@ -107,6 +107,7 @@ export default function LoginPage() {
         setIsLoading(true);
         try {
             await confirmationResult.confirm(otpValue);
+            setSessionCookie("resident");
             router.push("/user/dashboard");
         } catch (err: Error | unknown) {
             setError(err instanceof Error ? err.message : "Invalid OTP.");

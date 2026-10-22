@@ -8,8 +8,10 @@ import { motion } from "framer-motion";
 
 import { useEffect, useState } from "react";
 import { getCollectionSchedules, getBills, CollectionSchedule, BillInvoice } from "@/services/wasteStore";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ResidentDashboard() {
+    const { profile } = useAuth();
     const [schedules, setSchedules] = useState<CollectionSchedule[]>([]);
     const [bills, setBills] = useState<BillInvoice[]>([]);
 
@@ -42,7 +44,9 @@ export default function ResidentDashboard() {
     return (
         <div className="space-y-6 text-slate-800">
             <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-extrabold tracking-tight text-emerald-950 mb-2 font-serif">Welcome, Mahesh</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight text-emerald-950 mb-2 font-serif">
+                    Welcome, {profile?.name ? String(profile.name).split(' ')[0] : 'Resident'}
+                </h1>
                 <p className="text-slate-500 text-base">Here&apos;s an overview of your waste management activity.</p>
             </div>
 

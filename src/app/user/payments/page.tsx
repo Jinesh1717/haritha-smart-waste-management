@@ -93,6 +93,17 @@ export default function PaymentsPage() {
                 </p>
             </div>
 
+            {/* Demo Payment Notice */}
+            <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-sm text-amber-800">
+                <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                    <p className="font-bold">Demo Mode — No Real Payment Processed</p>
+                    <p className="text-amber-700 text-xs mt-0.5">
+                        This system currently records payment status for demonstration purposes. Integration with a real UPI / Razorpay gateway will be enabled before the official launch. PDF receipts are fully functional.
+                    </p>
+                </div>
+            </div>
+
             {/* Success Celebration Banner */}
             <AnimatePresence>
                 {paidSuccessBill && (

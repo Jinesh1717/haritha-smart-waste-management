@@ -10,7 +10,7 @@ import { LeafBackground } from "@/components/ui/leaf-background";
 import { Shield, KeyRound, ArrowRight, User } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { loginWithEmail, logoutUser } from "@/services/auth";
+import { loginWithEmail, logoutUser, setSessionCookie } from "@/services/auth";
 import { getUserProfile } from "@/services/firestore";
 
 export default function AdminLoginPage() {
@@ -41,8 +41,9 @@ export default function AdminLoginPage() {
             const userProfile = await getUserProfile(user.uid);
 
             if (userProfile && userProfile.role === "admin") {
-                // User is a valid admin
-                router.push("/dashboard");
+                    // Valid admin — set session cookie for middleware protection
+                    setSessionCookie("admin");
+                    router.push("/dashboard");
             } else {
                 // Not an admin
                 await logoutUser();

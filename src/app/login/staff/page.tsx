@@ -10,7 +10,7 @@ import { LeafBackground } from "@/components/ui/leaf-background";
 import { Briefcase, KeyRound, ArrowRight, User } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { loginWithEmail, logoutUser } from "@/services/auth";
+import { loginWithEmail, logoutUser, setSessionCookie } from "@/services/auth";
 import { getUserProfile } from "@/services/firestore";
 
 export default function StaffLoginPage() {
@@ -58,7 +58,8 @@ export default function StaffLoginPage() {
                 return;
             }
 
-            // Valid, approved staff member
+            // Valid, approved staff member — set session cookie for middleware
+            setSessionCookie("collector");
             router.push("/collector");
             
         } catch (error) {

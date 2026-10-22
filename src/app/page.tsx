@@ -51,7 +51,7 @@ export default function LandingPage() {
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop")' }}
+        style={{ backgroundImage: 'url("/hero-bg.jpg")' }}
       >
         <div className="absolute inset-0 bg-black/60 bg-gradient-to-b from-black/80 to-emerald-950/60" />
       </div>
